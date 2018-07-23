@@ -77,7 +77,22 @@ ggplot(aes(x = age, y = friendships_initiated), data = pf) +
     geom_smooth(method = 'lm', color = 'red')
   
     with (pf, cor.test(www_likes_received, likes_received))
-  
+    
+    install.packages('alr3')
+    library(ggplot2)
+    library('alr3')
+    data(Mitchell)
+    names(Mitchell)
+    ggplot(aes(x = Month, y = Temp), data = Mitchell)+
+      geom_point()+
+      scale_x_continuous(breaks=seq(0,203,12))
+    pf <- read.csv('pseudo_facebook.tsv',sep ='\t')
+    names(pf)
+    ggplot(aes(x = age, y = friend_count_mean), data = pf.fc_by_age)+
+      geom_line()
+      
+      
+      with (Mitchell, cor.test(Month, Temp))
   
   
   
