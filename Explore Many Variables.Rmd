@@ -15,7 +15,12 @@ data(pf)
 library(ggplot2)
 ggplot(aes(x = gender, y = age), 
        data = subset(pf, !is.na(gender)))+
-  geom_boxplot()
+  geom_boxplot()+
+  stat_summary(fun.y = mean, geom = 'point', shape = 4)
+
+ggplot(aes(x = age, y = friend_count),
+       data = subset(pf, !is.na(gender)))+
+  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
 ```
 
 
