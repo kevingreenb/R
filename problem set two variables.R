@@ -85,3 +85,56 @@ carat99 <- quantile(diamonds$carat, 0.99)
   # Depending on your investigation, it may or may not be important for you to understand how outliers, like these, came to be in your data.
   # 
   
+  # Subset the data to exclude diamonds with a volume
+  # greater than or equal to 800. Also, exclude diamonds
+  # with a volume of 0. Adjust the transparency of the
+  # points and add a linear model to the plot.
+  ggplot(subset(diamonds, 0 < volume & volume < 800), aes(x=volume, y=price)) + 
+    geom_point(alpha=0.05) +
+    geom_smooth(method='lm', color='red')
+  
+  with(diamonds, cor.test(price, volume))
+  
+  library(dplyr)
+  # Use the function dplyr package
+  # to create a new data frame containing
+  # info on diamonds by clarity.
+  
+  # Name the data frame diamondsByClarity
+  
+  # The data frame should contain the following
+  # variables in this order.
+  
+  #       (1) mean_price
+  #       (2) median_price
+  #       (3) min_price
+  #       (4) max_price
+  #       (5) n
+  
+  # where n is the number of diamonds in each
+  # level of clarity.
+  diamondsByClarity <- group_by(diamonds, clarity) %>%
+    summarise( mean_price=mean(price),
+               median_price=median(price),
+               min_price=min(price),
+               max_price=max(price),
+               n=n())
+  
+  diamonds_by_clarity <- group_by(diamonds, clarity)
+  diamonds_mp_by_clarity <- summarise(diamonds_by_clarity, mean_price = mean(price))
+  
+  diamonds_by_color <- group_by(diamonds, color)
+  diamonds_mp_by_color <- summarise(diamonds_by_color, mean_price = mean(price))
+  # We've created summary data frames with the mean price
+  # by clarity and color. You can run the code in R to
+  # verify what data is in the variables diamonds_mp_by_clarity
+  # and diamonds_mp_by_color.
+  
+  # Your task is to write additional code to create two bar plots
+  # on one output image using the grid.arrange() function from the package
+  # gridExtra.
+  
+  library(gridExtra)
+  p1 <- ggplot(diamonds_mp_by_clarity, aes(x=clarity, y=mean_price)) + geom_bar(stat='identity')
+  p2 <- ggplot(diamonds_mp_by_color, aes(x=color, y=mean_price)) + geom_bar(stat='identity')
+  grid.arrange(p1,p2,ncol=1)
