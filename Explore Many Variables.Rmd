@@ -1,0 +1,21 @@
+---
+title: "Explore Many Variables"
+author: "Kevin Green"
+date: "7/23/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+pf <- read.csv('pseudo_facebook.tsv', sep = '\t')
+data(pf)
+library(ggplot2)
+ggplot(aes(x = gender, y = age), 
+       data = subset(pf, !is.na(gender)))+
+  geom_boxplot()
+```
+
+
