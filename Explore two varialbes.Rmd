@@ -52,7 +52,7 @@ ggplot(aes(x = age, y = friendships_initiated), data = pf) +
   xlim(13,90)+
   coord_trans(y = 'sqrt')+
   geom_line(stat = 'summary', fun.y = mean)+
-  geom_line(stat = 'summary', fun.y = quantile, probs = .9,
+  geom_line(stat = 'summary', fun.y = quantile,
             linetype = 2, color = 'blue')
 
 ggplot(aes(x = age, y = friendships_initiated), data = pf) +
@@ -61,8 +61,26 @@ ggplot(aes(x = age, y = friendships_initiated), data = pf) +
   coord_cartesian(xlim = c(13, 90))+
   coord_trans(y = 'sqrt')+
   geom_line(stat = 'summary', fun.y = mean)
-
-
+?cor.test
+  cor.test(pf$age, pf$friend_count, method = 'pearson')
+  ?with
+  with (pf, cor.test(age, friend_count, method = 'pearson'))
+  ?subset
+  with (subset(pf, age <= 70), cor.test(age, friend_count, method = 'pearson'))
+  with (subset(pf, age <= 70), cor.test(age, friend_count))
+  
+  names(pf)
+  ggplot(aes(x = www_likes_received, y = likes_received), data = pf)+
+    geom_point()+
+    xlim(0, quantile(pf$www_likes_received, 0.95))+
+    ylim(0, quantile(pf$likes_received, 0.95))+
+    geom_smooth(method = 'lm', color = 'red')
+  
+    with (pf, cor.test(www_likes_received, likes_received))
+  
+  
+  
+  
 ```
 
 ## R Markdown
