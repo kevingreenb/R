@@ -102,6 +102,86 @@ table(pf$year_joined.bucket, useNA = 'ifany')
 
 ggplot(aes(x = age, y = friend_count), data = subset(pf, !is.na(year_joined.bucket)))+
   geom_line(aes(color=year_joined.bucket), stat='summary', fun.y=median)
+
+# Write code to do the following:
+
+# (1) Add another geom_line to code below
+# to plot the grand mean of the friend count vs age.
+
+# (2) Exclude any users whose year_joined.bucket is NA.
+
+# (3) Use a different line type for the grand mean.
+
+# As a reminder, the parameter linetype can take the values 0-6:
+
+# 0 = blank, 1 = solid, 2 = dashed
+# 3 = dotted, 4 = dotdash, 5 = longdash
+# 6 = twodash
+
+# ==================================================================
+ggplot(aes(x = age, y = friend_count), data = subset(pf, !is.na(year_joined.bucket))) +
+  geom_line(aes(color=year_joined.bucket), stat='summary', fun.y=mean) +
+  geom_line(stat='summary', fun.y=mean, linetype=2)
+
+
+summary( with(subset(pf, tenure>0), friend_count/tenure) )
+
+# Create a line graph of mean of friendships_initiated per day (of tenure)
+# vs. tenure colored by year_joined.bucket.
+
+# You need to make use of the variables tenure,
+# friendships_initiated, and year_joined.bucket.
+
+# You also need to subset the data to only consider user with at least
+# one day of tenure.
+
+# ========================================================================
+ggplot(subset(pf, tenure>0), aes(x=tenure, y=friendships_initiated/tenure, color=year_joined.bucket)) + 
+  geom_line(stat='summary', fun.y=mean)
+
+library(gridExtra)
+## 
+## Attaching package: 'gridExtra'
+## The following object is masked from 'package:dplyr':
+## 
+##     combine
+p1 <- ggplot(aes(x = tenure, y = friendships_initiated / tenure),
+       data = subset(pf, tenure >= 1)) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = 'summary',
+            fun.y = mean)
+
+p2 <- ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = "summary",
+            fun.y = mean)
+
+p3 <- ggplot(aes(x = 30 * round(tenure / 30), y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = "summary",
+            fun.y = mean)
+
+p4 <- ggplot(aes(x = 90 * round(tenure / 90), y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = "summary",
+            fun.y = mean)
+
+grid.arrange(p1,p2,p3,p4, ncol=1)
+
+# Instead of geom_line(), use geom_smooth() to add a smoother to the plot.
+# You can use the defaults for geom_smooth() but do color the line
+# by year_joined.bucket
+
+# ALTER THE CODE BELOW THIS LINE
+# ==============================================================================
+
+ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_smooth(aes(color = year_joined.bucket))
+
 ```
 
 
