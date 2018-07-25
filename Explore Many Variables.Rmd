@@ -182,6 +182,16 @@ ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
        data = subset(pf, tenure > 0)) +
   geom_smooth(aes(color = year_joined.bucket))
 
+yo <- read.csv('yogurt.csv')
+str(yo)
+
+yo$id <- factor(yo$id)
+str(yo)
+
+library(ggplot2)
+ggplot(aes(x = price), data = yo)+
+  geom_histogram()
+
 ```
 
 
