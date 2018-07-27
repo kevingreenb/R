@@ -241,6 +241,19 @@ ggplot (aes(x = time, y = price),
   geom_point(aes(size = all.purchases), pch = 1)
 
 ?set.seed
+
+install.packages('GGally')
+library(GGally)
+theme_set(theme_minimal(20))
+
+# set the seed for reproducible results
+pf <- read.csv('pseudo_facebook.tsv', sep = '\t')
+set.seed(1836)
+pf_subset <- pf[, c(2:15)]
+#pf_subset <- subset(pf, select = -c(userid, year_joined, year_joined_bucket))
+names(pf_subset)
+ggpairs(pf_subset[sample.int(nrow(pf_subset), 1000),])
+
 ```
 
 
