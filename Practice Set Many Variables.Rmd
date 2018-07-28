@@ -136,6 +136,15 @@ ggplot(pf, aes(x = tenure, y = prop_initiated, color = year_joined.bucket))+
 # There won't be a solution image for this exercise.
 # You will answer some questions about your plot in
 # the next two exercises.
+
+ggplot(pf, aes(x = 25*round(tenure/25), y = prop_initiated, color = year_joined.bucket))+
+  geom_line(stat = 'summary', fun.y=median, na.rm = TRUE)
 ```
+
+```{r}
+#Largest prop_initiaed group's mean
+mean(pf$prop_initiated[pf$year_joined.bucket=='(2012,2014]'], na.rm=TRUE)
+```
+
 
 
