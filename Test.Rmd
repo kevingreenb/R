@@ -1,0 +1,15 @@
+---
+title: "Test"
+author: "Kevin Green"
+date: "7/28/2018"
+output: html_document
+---
+
+
+
+```{r}
+library('ggplot2')
+diamonds
+summary(diamonds)
+```
+

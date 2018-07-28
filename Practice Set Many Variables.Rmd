@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r cars}
+```{r}
 # Create a histogram of diamond prices.
 # Facet the histogram by diamond color
 # and use cut to color the histogram bars.
@@ -21,5 +21,33 @@ knitr::opts_chunk$set(echo = TRUE)
 # 'qual' was used to color the histogram using
 # scale_fill_brewer(type = 'qual')
 
+data(diamonds)
+library(ggplot2)
+names(diamonds)
+?facet_wrap
+
+ggplot(aes(x = price, fill = cut), data = diamonds)+
+  scale_x_log10()+
+  geom_histogram()+
+  facet_wrap(~color)+
+  scale_fill_brewer(type = 'qual')
+
+
+```
+```{r}
+# Create a scatterplot of diamond price vs.
+# table and color the points by the cut of
+# the diamond.
+
+# The plot should look something like this.
+# http://i.imgur.com/rQF9jQr.jpg
+
+# Note: In the link, a color palette of type
+# 'qual' was used to color the scatterplot using
+# scale_color_brewer(type = 'qual')
+
+ggplot(aes(x=table, y=price, color = cut), data = diamonds)+
+  geom_point(position = position_jitter(), alpha = 1/4)+
+  scale_fill_brewer(type = 'qual')
 ```
 
