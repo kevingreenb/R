@@ -47,7 +47,7 @@ ggplot(aes(x = price, fill = cut), data = diamonds)+
 # scale_color_brewer(type = 'qual')
 
 ggplot(aes(x=table, y=price, color = cut), data = diamonds)+
-  geom_point(position = position_jitter(), alphsa = 1/4)+
+  geom_point(position = position_jitter(), alpha = 1/4)+
   scale_fill_brewer(type = 'qual')
 ```
 
@@ -139,11 +139,23 @@ ggplot(pf, aes(x = tenure, y = prop_initiated, color = year_joined.bucket))+
 
 ggplot(pf, aes(x = 25*round(tenure/25), y = prop_initiated, color = year_joined.bucket))+
   geom_line(stat = 'summary', fun.y=median, na.rm = TRUE)
+
+#another alternative
+ggplot(pf, aes(x=tenure, y=prop_initiated, color=year_joined.bucket)) +
+  geom_smooth(na.rm=TRUE)
+
 ```
 
 ```{r}
 #Largest prop_initiaed group's mean
 mean(pf$prop_initiated[pf$year_joined.bucket=='(2012,2014]'], na.rm=TRUE)
+```
+
+```{r}
+ggplot(diamonds, aes(x=cut, y=price/carat, color=color)) +
+  geom_point(position=position_jitter(), alpha=0.33) + 
+  facet_wrap(~clarity) +
+  scale_color_brewer(type='div')
 ```
 
 
