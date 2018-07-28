@@ -254,6 +254,10 @@ pf_subset <- pf[, c(2:15)]
 names(pf_subset)
 ggpairs(pf_subset[sample.int(nrow(pf_subset), 1000),])
 
+nci <- read.csv('nci.tsv')
+#changing columns to produce nicer plot
+colnames(nci) <-c(1)
+
 ```
 
 
