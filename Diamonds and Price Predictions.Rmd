@@ -1,0 +1,50 @@
+---
+title: "Diamonds and Price Predictions"
+author: "Kevin Green"
+date: "7/29/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages('ggplot2')
+data(diamonds)
+library(ggplot2)
+
+
+# Let's start by examining two variables in the data set.
+# The scatterplot is a powerful tool to help you understand
+# the relationship between two continuous variables.
+
+# We can quickly see if the relationship is linear or not.
+# In this case, we can use a variety of diamond
+# characteristics to help us figure out whether
+# the price advertised for any given diamond is 
+# reasonable or a rip-off.
+
+# Let's consider the price of a diamond and it's carat weight.
+# Create a scatterplot of price (y) vs carat weight (x).
+
+# Limit the x-axis and y-axis to omit the top 1% of values.
+diamonds$volume <- with(diamonds, x*y*z)
+ggplot(data = subset(diamonds, volume < quantile(volume, 0.99)), aes(x = carat, y = price))+
+  geom_point()
+
+#Right answer
+ggplot(diamonds, aes(x = carat, y = price))+
+  geom_point(color = 'darkblue', alpha = 0.05)+
+  xlim(0, quantile(diamonds$carat,0.99))+
+  ylim(0, quantile(diamonds$price, 0.99))
+#Another answer with qplot
+qplot(data = diamonds, x = carat, y = price,
+      xlim = c(0, quantile(diamonds$carat, 0.99)),
+      ylim = c(0, quantile(diamonds$price, 0.99)))+
+  geom_point(fill = I('#F79420'), color = 'black', shape = 21)
+
+
+
+```
+
