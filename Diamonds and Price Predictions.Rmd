@@ -209,6 +209,22 @@ m4 <- update(m1, ~ . + color)
 m5 <- update(m1, ~ . + clarity)
 ```
 
+```{r}
+thisDiamond = data.frame(carat = 1.00, cut = "V. Good",
+                         color = "I", clarity = "VS1")
+modelEstimate = predict(m5, newdata = thisDiamond,
+                        interval = "prediction", level = .95)
+
+with(dat, sd(m4.residuals))
+
+with(subset(dat, carat > .9 & carat < 1.1), sd(m4.residuals))
+
+dat$resid <- as.numeric(dat$m4.residuals)
+ggplot(aes(y = resid, x = round(carat, 2)), data = dat) +
+  geom_line(stat = "summary", fun.y = sd)
+```
+
+
 
 
 
