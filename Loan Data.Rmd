@@ -19,10 +19,31 @@ This data set was facilitated by Prosper
 
 
 ```{r}
-loans2 <- subset(loans, !(EmploymentStatus %in% c('','Not available')))
-ggplot(data=loans2, aes(x=EmploymentStatus)) +
+#Subset data to exclude ambiguous employment status, top 1% earners 
+#and bottom 1%
+loans2 <- subset(loans, !(EmploymentStatus %in% c('','Not available','Other')))
+loans2 <- subset(loans2, StatedMonthlyIncome<quantile(StatedMonthlyIncome, 0.99) 
+                 & StatedMonthlyIncome>quantile(StatedMonthlyIncome, 0.01) )
+
+#Creating data frame with means and medians for Loan Amounts
+loan.loan_by_income <- loans2 %>%
+  group_by(IncomeRange) %>%
+  summarise(mean_loan_amount=mean(LoanOriginalAmount),
+            median_loan_amount=median(LoanOriginalAmount),
+            n=n())
+ggplot(loan.loan_by_income, aes(x=IncomeRange,y=mean_loan_amount)) + 
+  geom_bar(stat = "identity")
+
+#Counts for Employment Status of data sample
+ggplot(loans2, aes(x=EmploymentStatus)) +
 geom_bar(fill = I('#4863A0')) +
 geom_text(stat='count', aes(label=..count..), vjust=-0.5)
+
+#Loan Amount by Monthly Income
+ggplot(loans2, aes(x = StatedMonthlyIncome, y = LoanOriginalAmount))+
+  geom_point(alpha=0.20, position=position_jitter())
+
+
 ```
 
 

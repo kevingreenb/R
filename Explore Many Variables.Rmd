@@ -42,7 +42,7 @@ ggplot(aes(x = age, y = friend_count),
 # 2  13   male          184.2342                  61  265
 # 3  14 female          329.1938                 245  834
 # 4  14   male          157.1204                  88 1201
-
+library(dplyr)
 pf.fc_by_age_gender <- pf %>%
   filter(!is.na(gender)) %>%
   group_by(age, gender) %>%
