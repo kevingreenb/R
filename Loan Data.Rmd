@@ -1,17 +1,29 @@
 ---
-title: "Loan Data"
+title: "Prosper Loan Data"
 author: "Kevin Green"
-date: "8/4/2018"
+date: "August 4th, 2018"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+loans <- read.csv('prosperLoanData.csv')
+
 ```
+
+<h2>Abstract</h2>
+I describe the effects that certain factors play over
+<h2>Introduction</h2>
+This data set was facilitated by Prosper
 
 
 ```{r}
-loans <- read.csv('prosperLoanData.csv')
-head(loans)
+loans2 <- subset(loans, !(EmploymentStatus %in% c('','Not available')))
+ggplot(data=loans2, aes(x=EmploymentStatus)) +
+geom_bar(fill = I('#4863A0')) +
+geom_text(stat='count', aes(label=..count..), vjust=-0.5)
 ```
+
+
 
