@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
+library(dplyr)
+library(reshape2)
 loans <- read.csv('prosperLoanData.csv')
 
 ```
@@ -29,20 +31,30 @@ loans2 <- subset(loans2, StatedMonthlyIncome<quantile(StatedMonthlyIncome, 0.99)
 loan.loan_by_income <- loans2 %>%
   group_by(IncomeRange) %>%
   summarise(mean_loan_amount=mean(LoanOriginalAmount),
-            median_loan_amount=median(LoanOriginalAmount),
-            n=n())
-ggplot(loan.loan_by_income, aes(x=IncomeRange,y=mean_loan_amount)) + 
-  geom_bar(stat = "identity")
+            median_loan_amount=median(LoanOriginalAmount))
 
-#Counts for Employment Status of data sample
-ggplot(loans2, aes(x=EmploymentStatus)) +
+mdata <- melt(loan.loan_by_income, id = c('IncomeRange'))
+
+#Counts for Employment Status
+ggplot(loans2, aes(EmploymentStatus)) +
 geom_bar(fill = I('#4863A0')) +
 geom_text(stat='count', aes(label=..count..), vjust=-0.5)
 
 #Loan Amount by Monthly Income
-ggplot(loans2, aes(x = StatedMonthlyIncome, y = LoanOriginalAmount))+
+ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
   geom_point(alpha=0.20, position=position_jitter())
 
+#Mean loan amount by income range
+ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))
+
+#Is a home owner
+ggplot(loans2, aes(IsBorrowerHomeowner))+
+  geom_bar()
+pie <- bp + coord_polar("y", start=0)
+pie
 
 ```
 
