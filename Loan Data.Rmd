@@ -27,7 +27,7 @@ loans2 <- subset(loans, !(EmploymentStatus %in% c('','Not available','Other')))
 loans2 <- subset(loans2, StatedMonthlyIncome<quantile(StatedMonthlyIncome, 0.99) 
                  & StatedMonthlyIncome>quantile(StatedMonthlyIncome, 0.01) )
 
-#Creating data frame with means and medians for Loan Amounts
+#Creating data frames with means and medians for Loan Amounts
 loan.loan_by_income <- loans2 %>%
   group_by(IncomeRange) %>%
   summarise(mean_loan_amount=mean(LoanOriginalAmount),
@@ -50,6 +50,16 @@ geom_text(stat='count', aes(label=..count..), vjust=-0.5)
 ggplot(loans2, aes(LoanOriginalAmount)) +
 geom_histogram()
 
+#Loans defaulted by Original Amount
+ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(LoanOriginalAmount)) +
+geom_histogram()
+
+#Loans defaulted by Income Range
+ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(IncomeRange)) +
+geom_histogram(stat = 'count')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))
+
 #Mean and median loan amount by income range
 ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+
   geom_bar(position = 'dodge', stat = 'identity')+
@@ -59,9 +69,23 @@ ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+
 ggplot(mdata2, aes(x = Term, value, fill = variable))+
   geom_bar(position = 'dodge', stat = 'identity')
 
+#Loans by Income range
+ggplot(loans2, aes(IncomeRange))+
+  geom_bar()
+
+
 #Loan Amount by Monthly Income
 ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
-  geom_point(alpha=0.05, position=position_jitter())
+  geom_point(alpha  = 0.05, position=position_jitter())
+
+#Loan Amount by Monthly Income (Colored)
+ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount, color = IncomeRange))+
+  geom_point(position=position_jitter())
+
+#Loan Amount by Monthly Income (Term)
+ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
+  geom_point(alpha = 0.3, position=position_jitter())+
+  facet_wrap(~Term)
 
 #Loan amount by credit score
 ggplot(loans2,aes(CreditScoreRangeLower, LoanOriginalAmount))+
@@ -78,7 +102,17 @@ ggplot(loans2,aes(CreditScoreRangeLower, BorrowerAPR))+
   geom_point(alpha = 0.10)+
   geom_smooth(method='auto', color='red')
 
+#LenderYield by BorrowerAPR
+ggplot(loans2, aes(BorrowerAPR, LenderYield))+
+  geom_point(alpha = 0.10)
 
+#EstimatedLoss by BorrowerAPR
+ggplot(loans2, aes(BorrowerAPR, EstimatedLoss))+
+  geom_point(alpha = 0.10)
+
+#LenderYield by EstimatedLoss
+ggplot(loans2, aes(LenderYield, EstimatedLoss))+
+  geom_point(alpha = 0.10)
 
 ```
 
