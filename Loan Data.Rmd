@@ -26,6 +26,7 @@ This data set was facilitated by Prosper
 loans2 <- subset(loans, !(EmploymentStatus %in% c('','Not available','Other')))
 loans2 <- subset(loans2, StatedMonthlyIncome<quantile(StatedMonthlyIncome, 0.99) 
                  & StatedMonthlyIncome>quantile(StatedMonthlyIncome, 0.01) )
+loans2 <- subset(loans2, !(IncomeRange %in% c('$0','Not displayed')))
 
 #Creating data frames with means and medians for Loan Amounts
 loan.loan_by_income <- loans2 %>%
@@ -44,76 +45,162 @@ mdata2 <- melt(loan.loan_by_term, id = c('Term'))
 #Counts for Employment Status
 ggplot(loans2, aes(EmploymentStatus)) +
 geom_bar() +
-geom_text(stat='count', aes(label=..count..), vjust=-0.5)
+geom_text(stat='count', aes(label=..count..), vjust=-0.5)+ xlab('Employment Status') + ylab('Count')
+
+#LoanOriginalAmount by EmploymentStatus 
+ggplot(loans2, aes(EmploymentStatus, LoanOriginalAmount))+
+  geom_boxplot()+ xlab('Employment Status') + ylab('Loan Amount')
+
+#LoanOriginalAmount by IncomeRange 
+ggplot(loans2, aes(IncomeRange, LoanOriginalAmount))+
+  geom_boxplot()+ xlab('Income Range') + ylab('Loan Amount')+
+  scale_x_discrete(limits=c('$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))
+
+#Counts for IsBorrowerHomeowner
+ggplot(loans2, aes(IsBorrowerHomeowner)) +
+geom_bar() +
+geom_text(stat='count', aes(label=..count..), vjust=-0.5)+xlab('Borrower is Homeowner') + ylab('Count')
+
+#Mean StatedMonthlyIncome for IsBorrowerHomeowner
+ggplot(loans2, aes(x = IsBorrowerHomeowner, y =StatedMonthlyIncome))+
+  geom_bar(stat = 'summary', fun.y = mean)+xlab('Borrower is Homeowner') + ylab('Monthly Income')
+
+#LoanOriginalAmount by IsBorrowerHomeowner (EmploymentStatus)
+ggplot(loans2, aes(IsBorrowerHomeowner, LoanOriginalAmount))+
+  geom_boxplot()+ xlab('Homeowner') + ylab('Loan Amount')+
+  facet_wrap(~EmploymentStatus)
+
+#LoanOriginalAmount by IsBorrowerHomeowner (IncomeRange)
+ggplot(loans2, aes(IsBorrowerHomeowner, LoanOriginalAmount))+
+  geom_boxplot()+ xlab('Homeowner') + ylab('Loan Amount')+
+  facet_wrap(~IncomeRange)
+
+#DebtToIncomeRatio for IncomeRange
+ggplot(loans2, aes(x = IncomeRange, y =DebtToIncomeRatio))+
+  geom_bar(stat = 'summary', fun.y = mean)+
+  scale_x_discrete(limits=c('$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+
+  facet_wrap(~IsBorrowerHomeowner)+xlab('Income Range')+ylab('Debt to Income Ratio')
 
 #Loan amounts
 ggplot(loans2, aes(LoanOriginalAmount)) +
-geom_histogram()
+geom_histogram()+xlab('Loan Amount') + ylab('Count')
 
 #Loans defaulted by Original Amount
 ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(LoanOriginalAmount)) +
-geom_histogram()
+geom_histogram()+xlab('Loan Amount') + ylab('Count')
 
-#Loans defaulted by Income Range
+#Loans defaulted by IncomeRange
 ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(IncomeRange)) +
 geom_histogram(stat = 'count')+
   scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
 
-#Mean and median loan amount by income range
+#Loans completed by Original Amount
+ggplot(subset(loans2, LoanStatus == 'Completed'), aes(LoanOriginalAmount)) +
+geom_histogram()+xlab('Loan Amount')+ylab('Count')
+
+#Loans Completed by IncomeRange
+ggplot(subset(loans2, LoanStatus == 'Completed'), aes(IncomeRange)) +
+geom_histogram(stat = 'count')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
+
+#Mean and median loan amount by IncomeRange
 ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+
   geom_bar(position = 'dodge', stat = 'identity')+
   scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Mean and Median')
+
 #Mean and median  amount by Term
 ggplot(mdata2, aes(x = Term, value, fill = variable))+
-  geom_bar(position = 'dodge', stat = 'identity')
+  geom_bar(position = 'dodge', stat = 'identity')+xlab('Term')+ylab('Mean and Median')
 
 #Loans by Income range
 ggplot(loans2, aes(IncomeRange))+
-  geom_bar()
+  geom_bar()+xlab('Income Range')+ylab('Count')
 
 
-#Loan Amount by Monthly Income
+#LoanAmount by MonthlyIncome
 ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
-  geom_point(alpha  = 0.05, position=position_jitter())
+  geom_point(alpha  = 0.05, position=position_jitter())+xlab('Monthly Income')+ylab('Loan Amount')
 
-#Loan Amount by Monthly Income (Colored)
+#LoanAmount by MonthlyIncome (Colored)
 ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount, color = IncomeRange))+
-  geom_point(position=position_jitter())
+  geom_point(position=position_jitter())+xlab('Monthly Income')+ylab('Loan Amount')
 
-#Loan Amount by Monthly Income (Term)
+#LoanAmount by MonthlyIncome (Term)
 ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
   geom_point(alpha = 0.3, position=position_jitter())+
-  facet_wrap(~Term)
+  facet_wrap(~Term)+xlab('Monthly Income')+ylab('Loan Amount')
 
 #Loan amount by credit score
 ggplot(loans2,aes(CreditScoreRangeLower, LoanOriginalAmount))+
   geom_point(alpha = 0.10)+
-  geom_smooth(method='auto', color='red')
+  geom_smooth(method='auto', color='red')+xlab('Credit Score Lower Range')+ylab('Loan Amount')
 
 #Rate by credit score
 ggplot(loans2,aes(CreditScoreRangeLower, BorrowerRate))+
   geom_point(alpha = 0.10)+
-  geom_smooth(method='auto', color='red')
+  geom_smooth(method='auto', color='red')+xlab('Credit Score Lower Range')+ylab('Borrower Rate')
 
 #APR by credit score
 ggplot(loans2,aes(CreditScoreRangeLower, BorrowerAPR))+
   geom_point(alpha = 0.10)+
-  geom_smooth(method='auto', color='red')
+  geom_smooth(method='auto', color='red')+xlab('Credit Score Lower Range')+ylab('Borrower APR')
 
 #LenderYield by BorrowerAPR
 ggplot(loans2, aes(BorrowerAPR, LenderYield))+
-  geom_point(alpha = 0.10)
+  geom_point(alpha = 0.10)+xlab('Borrower APR')+ylab('Lender Yield')
 
 #EstimatedLoss by BorrowerAPR
 ggplot(loans2, aes(BorrowerAPR, EstimatedLoss))+
-  geom_point(alpha = 0.10)
+  geom_point(alpha = 0.10)+xlab('Borrower APR')+ylab('Estimated Loss')
 
 #LenderYield by EstimatedLoss
 ggplot(loans2, aes(LenderYield, EstimatedLoss))+
-  geom_point(alpha = 0.10)
+  geom_point(alpha = 0.10)+xlab('Lender Yield')+ylab('Estimated Loss')
 
+#LenderYield by ProsperScore
+ggplot(loans2, aes(x = ProsperScore, y = LenderYield)) +
+  geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Lender Yield')
+
+#LenderYield by ProsperScore
+ggplot(loans2, aes(x = ProsperScore, y = LenderYield, color = IncomeRange)) +
+  geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Lender Yield')
+
+#BorrowerAPR by ProsperScore
+ggplot(loans2, aes(x = ProsperScore, y = BorrowerAPR, color = IncomeRange)) +
+  geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Borrower APR')
+
+#StatedMonthlyIncome by EmploymentStatusDuration
+ggplot(loans2, aes(x = EmploymentStatusDuration, y = StatedMonthlyIncome))+
+  geom_line(stat='summary', fun.y=median)+xlab('Employment Status Duration')+ylab('Monthly Income')
+
+#StatedMonthlyIncome by OpenCreditLines
+ggplot(subset(loans2, OpenCreditLines<quantile(OpenCreditLines, 0.99,  na.rm=TRUE)), aes(x = OpenCreditLines, y = StatedMonthlyIncome))+
+  geom_line(stat='summary', fun.y=mean)+xlab('Open Credit Lines')+ylab('Monthly Income')
+
+#StatedMonthlyIncome by InquiriesLast6Months
+ggplot(subset(loans2, InquiriesLast6Months<quantile(InquiriesLast6Months, 0.99,  na.rm=TRUE)), aes(x = InquiriesLast6Months, y = StatedMonthlyIncome))+
+  geom_line(stat='summary', fun.y=mean)+xlab('Inquiries in the Last 6 Months')+ylab('Monthly Income')
+
+#StatedMonthlyIncome by CurrentDelinquencies
+ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99,  na.rm=TRUE)), aes(x = CurrentDelinquencies, y = StatedMonthlyIncome))+
+  geom_line(stat='summary', fun.y=mean)+xlab('Current Delinquencies')+ylab('Monthly Income')
+
+#InquiriesLast6Months by CurrentDelinquencies
+ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99,  na.rm=TRUE)), aes(x = CurrentDelinquencies, y = InquiriesLast6Months))+
+  geom_line(stat='summary', fun.y=mean)+xlab('Current Delinquencies')+ylab('Inquiries in the Last 6 Months')
+
+#CurrentCreditLines by CurrentDelinquencies
+ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99,  na.rm=TRUE)), aes(x = CurrentDelinquencies, y = CurrentCreditLines))+
+  geom_line(stat='summary', fun.y=mean)+xlab('Current Delinquencies')+ylab('Number of Credit Lines')
+
+#LoanOriginalAmount by CurrentDelinquencies
+ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99,  na.rm=TRUE)), aes(x = CurrentDelinquencies, y = LoanOriginalAmount))+
+  geom_line(stat='summary', fun.y=mean)+xlab('Current Delinquencies')+ylab('Loan Amount')
 ```
 
 
