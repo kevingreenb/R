@@ -50,12 +50,44 @@ geom_text(stat='count', aes(label=..count..), vjust=-0.5)+ xlab('Employment Stat
 #LoanOriginalAmount by EmploymentStatus 
 ggplot(loans2, aes(EmploymentStatus, LoanOriginalAmount))+
   geom_boxplot()+ xlab('Employment Status') + ylab('Loan Amount')
+```
 
+```{r}
+
+#Loans by Income range
+ggplot(loans2, aes(IncomeRange))+
+  geom_bar()+xlab('Income Range')+ylab('Count')
 #LoanOriginalAmount by IncomeRange 
+
 ggplot(loans2, aes(IncomeRange, LoanOriginalAmount))+
   geom_boxplot()+ xlab('Income Range') + ylab('Loan Amount')+
   scale_x_discrete(limits=c('$1-24,999','$25,000-49,999','$50,000-74,999',
                             '$75,000-99,999','$100,000+'))
+
+#DebtToIncomeRatio for IncomeRange
+ggplot(loans2, aes(x = IncomeRange, y =DebtToIncomeRatio))+
+  geom_bar(stat = 'summary', fun.y = mean)+
+  scale_x_discrete(limits=c('$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+
+  facet_wrap(~IsBorrowerHomeowner)+xlab('Income Range')+ylab('Debt to Income Ratio')
+
+#Loans defaulted by IncomeRange
+ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(IncomeRange)) +
+geom_histogram(stat = 'count')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
+
+#Loans Completed by IncomeRange
+ggplot(subset(loans2, LoanStatus == 'Completed'), aes(IncomeRange)) +
+geom_histogram(stat = 'count')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
+
+#Mean and median loan amount by IncomeRange
+ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Mean and Median')
 
 #Counts for IsBorrowerHomeowner
 ggplot(loans2, aes(IsBorrowerHomeowner)) +
@@ -76,13 +108,6 @@ ggplot(loans2, aes(IsBorrowerHomeowner, LoanOriginalAmount))+
   geom_boxplot()+ xlab('Homeowner') + ylab('Loan Amount')+
   facet_wrap(~IncomeRange)
 
-#DebtToIncomeRatio for IncomeRange
-ggplot(loans2, aes(x = IncomeRange, y =DebtToIncomeRatio))+
-  geom_bar(stat = 'summary', fun.y = mean)+
-  scale_x_discrete(limits=c('$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))+
-  facet_wrap(~IsBorrowerHomeowner)+xlab('Income Range')+ylab('Debt to Income Ratio')
-
 #Loan amounts
 ggplot(loans2, aes(LoanOriginalAmount)) +
 geom_histogram()+xlab('Loan Amount') + ylab('Count')
@@ -91,36 +116,15 @@ geom_histogram()+xlab('Loan Amount') + ylab('Count')
 ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(LoanOriginalAmount)) +
 geom_histogram()+xlab('Loan Amount') + ylab('Count')
 
-#Loans defaulted by IncomeRange
-ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(IncomeRange)) +
-geom_histogram(stat = 'count')+
-  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
 
 #Loans completed by Original Amount
 ggplot(subset(loans2, LoanStatus == 'Completed'), aes(LoanOriginalAmount)) +
 geom_histogram()+xlab('Loan Amount')+ylab('Count')
 
-#Loans Completed by IncomeRange
-ggplot(subset(loans2, LoanStatus == 'Completed'), aes(IncomeRange)) +
-geom_histogram(stat = 'count')+
-  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
-
-#Mean and median loan amount by IncomeRange
-ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+
-  geom_bar(position = 'dodge', stat = 'identity')+
-  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Mean and Median')
 
 #Mean and median  amount by Term
 ggplot(mdata2, aes(x = Term, value, fill = variable))+
   geom_bar(position = 'dodge', stat = 'identity')+xlab('Term')+ylab('Mean and Median')
-
-#Loans by Income range
-ggplot(loans2, aes(IncomeRange))+
-  geom_bar()+xlab('Income Range')+ylab('Count')
-
 
 #LoanAmount by MonthlyIncome
 ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
@@ -201,6 +205,7 @@ ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99, 
 #LoanOriginalAmount by CurrentDelinquencies
 ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99,  na.rm=TRUE)), aes(x = CurrentDelinquencies, y = LoanOriginalAmount))+
   geom_line(stat='summary', fun.y=mean)+xlab('Current Delinquencies')+ylab('Loan Amount')
+
 ```
 
 
