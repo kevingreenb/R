@@ -24,8 +24,6 @@ This data set contains information about loans. Has over 113000+ observations an
 <h2>Slight adjustment to the data sets</h2>
 Started by removing ambigous employment statuses from the data set also removed outliers which made the charts very difficult to read. In addition, created a data frame with means and medians to better compare this information.
 
-<h2>Income Brackets</h2>
-Next, it should be important to understand which income brackets are the most frequent. It helps understand which income range is most common in the data set. From Chart 3, $25,000-49,999 and $50,000-74,99 are the most frequent, with Not employeed representing a small portion. $100,000+ income brackets tend to have the highest median for loans amount. From Chart 5, it is evident that the $1-24,999 range has the highest dept to income ratio, meaning, they are borrowing the most money in propotion to their income. The most defaulted loans also come from $25,000-49,999 and $50,000-74,99 which are the most frequent loans. The $1-24,999 bracket seems to be the one with the greatest probablity of defaulting. $75,000-99,999 and $100,000+ are the more likely to complete their loans.
 ```{r}
 #Subset data to exclude ambiguous employment status, top 1% earners 
 #and bottom 1% among other outliers
@@ -78,6 +76,27 @@ ggplot(subset(loans2, LoanStatus == 'Completed'), aes(IncomeRange)) +
 geom_histogram(stat = 'count')+
   scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
                             '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
+
+#Chart 9
+#Counts for IsBorrowerHomeowner
+ggplot(loans2, aes(IsBorrowerHomeowner)) +
+geom_bar() +
+geom_text(stat='count', aes(label=..count..), vjust=-0.5)+xlab('Borrower is Homeowner') + ylab('Count')
+
+#Chart 13
+#Loan amounts
+ggplot(loans2, aes(LoanOriginalAmount)) +
+geom_histogram()+xlab('Loan Amount') + ylab('Count')
+
+#Chart 14
+#Loans defaulted by Original Amount
+ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(LoanOriginalAmount)) +
+geom_histogram()+xlab('Loan Amount') + ylab('Count')
+
+#Chart 15
+#Loans completed by Original Amount
+ggplot(subset(loans2, LoanStatus == 'Completed'), aes(LoanOriginalAmount)) +
+geom_histogram()+xlab('Loan Amount')+ylab('Count')
 ```
 
 <h2>Bivariate Analysis</h2>
@@ -104,38 +123,16 @@ ggplot(loans2, aes(x = IncomeRange, y =DebtToIncomeRatio))+
                             '$75,000-99,999','$100,000+'))+
   facet_wrap(~IsBorrowerHomeowner)+xlab('Income Range')+ylab('Debt to Income Ratio')
 
-```
-
-
-
-<h2>Multivariate Analysis</h2> 
-
-```{r}
-
-```
-
-
-
-```{r}
 #Chart 8
 #Mean and median loan amount by IncomeRange
 ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+
   geom_bar(position = 'dodge', stat = 'identity')+
   scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
                             '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Mean and Median')
-```
-<h2>Homeowners</h2>
-By a small margin, homeowners represent the majority of loans, they also have the highest mean income. Chart 11 shows Employed and Self-Employed homeowners have the highest median loan amounts, it also shows homeowners are getting higher loan amounts in general, except from income ranges $1-24,999 and $75,000-99,000, where both homeowners and non-homeowners have similar loan amounts as shown in Chart 12.
-```{r}
-#Chart 9
-#Counts for IsBorrowerHomeowner
-ggplot(loans2, aes(IsBorrowerHomeowner)) +
-geom_bar() +
-geom_text(stat='count', aes(label=..count..), vjust=-0.5)+xlab('Borrower is Homeowner') + ylab('Count')
 
 #Chart 10
 #Mean StatedMonthlyIncome for IsBorrowerHomeowner
-ggplot(loans2, aes(x = IsBorrowerHomeowner, y =StatedMonthlyIncome))+
+ggplot(loans2, aes(IsBorrowerHomeowner, StatedMonthlyIncome))+
   geom_bar(stat = 'summary', fun.y = mean)+xlab('Borrower is Homeowner') + ylab('Monthly Income')
 
 #Chart 11
@@ -149,54 +146,17 @@ ggplot(loans2, aes(IsBorrowerHomeowner, LoanOriginalAmount))+
 ggplot(loans2, aes(IsBorrowerHomeowner, LoanOriginalAmount))+
   geom_boxplot()+ xlab('Homeowner') + ylab('Loan Amount')+
   facet_wrap(~IncomeRange)
-```
-<h2>Loan Amounts</h2>
-Exploring loan amounts, we see in Chart 13 that the majority of loan amounts range from $0 to $10000, while that range also inclues the most defaulted loan amounts as well as the most completed. The most common loan amount is around $5000, while $25000 are not very frequent, we see in Chart 14 that they do default quite significantly. The longer the Term(months), the higher the loan amounts tend to be, thus 60 month terms represent the highest, and 12 months the lowest.
-
-```{r}
-#Chart 13
-#Loan amounts
-ggplot(loans2, aes(LoanOriginalAmount)) +
-geom_histogram()+xlab('Loan Amount') + ylab('Count')
-
-#Chart 14
-#Loans defaulted by Original Amount
-ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(LoanOriginalAmount)) +
-geom_histogram()+xlab('Loan Amount') + ylab('Count')
-
-#Chart 15
-#Loans completed by Original Amount
-ggplot(subset(loans2, LoanStatus == 'Completed'), aes(LoanOriginalAmount)) +
-geom_histogram()+xlab('Loan Amount')+ylab('Count')
 
 #Chart 16
 #Mean and median  amount by Term
-ggplot(mdata2, aes(x = Term, value, fill = variable))+
+ggplot(mdata2, aes(Term, value, fill = variable))+
   geom_bar(position = 'dodge', stat = 'identity')+xlab('Term')+ylab('Mean and Median')
-```
-<h2>Monthly Income</h2>
-Studying loans by monthly incomes, reflect similar observations from exploring the data set with income ranges. The major observation made from this granular approach is that people earning around $8000+ a month will have signicantly higher loan amounts than smaller incomes. This can be seen in Chart 18.
-```{r}
+
 #Chart 17
 #LoanAmount by MonthlyIncome
 ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
   geom_point(alpha  = 0.05, position=position_jitter())+xlab('Monthly Income')+ylab('Loan Amount')
 
-#Chart 18
-#LoanAmount by MonthlyIncome (Colored)
-ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount, color = IncomeRange))+
-  geom_point(position=position_jitter())+xlab('Monthly Income')+ylab('Loan Amount')
-
-#Chart 19
-#LoanAmount by MonthlyIncome (Term)
-ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
-  geom_point(alpha = 0.3, position=position_jitter())+
-  facet_wrap(~Term)+xlab('Monthly Income')+ylab('Loan Amount')
-```
-<h2>Credit Scores, Rates and APR</h2>
-Credit scores have an interesting effect with loan amounts, it seems that the loan amount increases as credit scores increase all the way up to the 800 credit score bracket, where after this, the loan amounts decrease. This can be seen in Chart 20. As expected, higher credit scores have a negative relation with loan rates and APR. From chart 23 it is evident that there is a linear relationshipt between borrower APR and lender yield, with higher APRs representing higher yields for the lender. From this chart it seems that lenders make more yields from people with lower credit scores than those with higher, however, in Chart 24 and 25, there is also a relatioship between higher APRs having higher losses for the lender.
-
-```{r}
 #Chart 20
 #Loan amount by credit score
 ggplot(loans2,aes(CreditScoreRangeLower, LoanOriginalAmount))+
@@ -232,30 +192,12 @@ ggplot(loans2, aes(BorrowerAPR, EstimatedLoss))+
 #LenderYield by EstimatedLoss
 ggplot(loans2, aes(LenderYield, EstimatedLoss))+
   geom_point(alpha = 0.10)+xlab('Lender Yield')+ylab('Estimated Loss')
-```
-<h2>Prosper Score</h2>
-I am unclear how the Prosper Score variable is estimated, but from examining it, we can see in chart 26 that it has a negative relation with lender yield, seems the higher the Prosper Score, the less lender yield. Thus we start to suspect that prosper scores may use credit scores as a factor, which also have a simalar relation. We see the Prosper Score behaves very much alike through different income ranges. 
 
-```{r}
 #Chart 26
 #LenderYield by ProsperScore
 ggplot(loans2, aes(x = ProsperScore, y = LenderYield)) +
   geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Lender Yield')
 
-#Chart 27
-#LenderYield by ProsperScore
-ggplot(loans2, aes(x = ProsperScore, y = LenderYield, color = IncomeRange)) +
-  geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Lender Yield')
-
-#Chart 28
-#BorrowerAPR by ProsperScore
-ggplot(loans2, aes(x = ProsperScore, y = BorrowerAPR, color = IncomeRange)) +
-  geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Borrower APR')
-```
-<h2>Other Variables</h2>
-From Chart 29, it seems that employment tenure has more noise with higher tenure, in some cases it can represent higher monthly incomes for the borrower, but in other cases it can evidence lower income. The amount of open credit lines does seem to have a relationship with monthly income, the more open lines, the higher incomes associated with the borrower. However, users with more than 5 credit inquiries in the last 6 months, reflect a drop in monthly income. This seems important information lenders might want to know because from char 32 and 33, it shows that lower incomes have more delinquencies, same as borrowers with more inquiries in the last 6 months will have more delinquencies. The more credit lines the less delinquencies a borrower seems to have.
-
-```{r}
 #Chart 29
 #StatedMonthlyIncome by EmploymentStatusDuration
 ggplot(loans2, aes(x = EmploymentStatusDuration, y = StatedMonthlyIncome))+
@@ -292,7 +234,36 @@ ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99, 
 #LoanOriginalAmount by CurrentDelinquencies
 ggplot(subset(loans2, CurrentDelinquencies<quantile(CurrentDelinquencies, 0.99,  na.rm=TRUE)), aes(x = CurrentDelinquencies, y = LoanOriginalAmount))+
   geom_line(stat='summary', fun.y=mean)+xlab('Current Delinquencies')+ylab('Loan Amount')
+
 ```
+
+
+
+<h2>Multivariate Analysis</h2> 
+
+```{r}
+#Chart 18
+#LoanAmount by MonthlyIncome (Colored)
+ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount, color = IncomeRange))+
+  geom_point(position=position_jitter())+xlab('Monthly Income')+ylab('Loan Amount')
+
+#Chart 19
+#LoanAmount by MonthlyIncome (Term)
+ggplot(loans2, aes(StatedMonthlyIncome, LoanOriginalAmount))+
+  geom_point(alpha = 0.3, position=position_jitter())+
+  facet_wrap(~Term)+xlab('Monthly Income')+ylab('Loan Amount')
+
+#Chart 27
+#LenderYield by ProsperScore (IncomeRange)
+ggplot(loans2, aes(x = ProsperScore, y = LenderYield, color = IncomeRange)) +
+  geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Lender Yield')
+
+#Chart 28
+#BorrowerAPR by ProsperScore (IncomeRange)
+ggplot(loans2, aes(x = ProsperScore, y = BorrowerAPR, color = IncomeRange)) +
+  geom_line(stat='summary', fun.y=median)+xlab('Prosper Score')+ylab('Borrower APR')
+```
+
 <h2>Final Plots and Summary</h2>
 The most interesting observations I found among this data, was not the relations between variables, but instead the lack of relation between variables where I was expecting the opposite.
 One thing I was curious about was seeing which credit score were defaulting the most, before plotting the chart, I pictured lower credit scores defaulting the most, however, since most of the loans are given to borrowers with scores around the 700 vecinity, these scores were also the ones reporting most default loans likely due to the portion of the borrowers they represent. 
@@ -305,7 +276,7 @@ ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(CreditScoreRangeLower))+
   scale_x_continuous(limits = c(450, 900), breaks = seq(450, 900, 50))+xlab('Credit Score')+ylab('Percent Defaulted')+
   ggtitle('Default Distribution by Credit Score')
 ```
-Another factor I wanted to consider is, whether or not there was a relationship between credit scores and monthly incomes, so I compared credit scores. Before running the plot, I expected a positve slope between credit scores growing with income. Again, my suspicion was discarded, as there was little relation between these two variables. You can have relative low income and have a perfectly healthy credit scores, as well as having a high income and having low credit score. Credit scores reflect the person's likelyhood of paying back, and paying back seems to have more to do with a person's habits than his or her income.
+
 ```{r}
 #Default by Credit Score and Monthly Income
 ggplot(subset(loans2, LoanStatus == 'Defaulted'),aes(CreditScoreRangeLower, StatedMonthlyIncome))+
