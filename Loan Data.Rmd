@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(scales)
 library(ggplot2)
 library(dplyr)
@@ -23,6 +23,9 @@ This data set contains information about loans. Has over 113000+ observations an
 
 <h2>Slight adjustment to the data sets</h2>
 Started by removing ambigous employment statuses from the data set also removed outliers which made the charts very difficult to read. In addition, created a data frame with means and medians to better compare this information.
+
+<h2>Income Brackets</h2>
+Next, it should be important to understand which income brackets are the most frequent. It helps understand which income range is most common in the data set. From Chart 3, $25,000-49,999 and $50,000-74,99 are the most frequent, with Not employeed representing a small portion. $100,000+ income brackets tend to have the highest median for loans amount. From Chart 5, it is evident that the $1-24,999 range has the highest dept to income ratio, meaning, they are borrowing the most money in propotion to their income. The most defaulted loans also come from $25,000-49,999 and $50,000-74,99 which are the most frequent loans. The $1-24,999 bracket seems to be the one with the greatest probablity of defaulting. $75,000-99,999 and $100,000+ are the more likely to complete their loans.
 ```{r}
 #Subset data to exclude ambiguous employment status, top 1% earners 
 #and bottom 1% among other outliers
@@ -46,30 +49,46 @@ loan.loan_by_term <- loans2 %>%
 mdata <- melt(loan.loan_by_income, id = c('IncomeRange'))
 mdata2 <- melt(loan.loan_by_term, id = c('Term'))
 ```
-<h2>Employment Status</h2>
-In order to understand the properties of this data, we built a bar graph with the frequencies of the employment status. "Employeed" seems to be the most frequent status, whereas "Full time" and "Part time" are listed as a different status. For simplicity of this analysis, we are going to examine them as different variables.
-From Chart 2, we can see that mostly higher loan amounts come from Employeed and secondly from Self Employed, whereas to my surprise retired has higher median amounts than part-time. Not Emplyed has the lowest median next to Part-time.
+
+<h2>Univariate Analysis</h2>
 ```{r}
 #Chart 1
+#This chart shows Employed status as the most common status, with 65998 instances
 #Counts for Employment Status
 ggplot(loans2, aes(EmploymentStatus)) +
 geom_bar() +
 geom_text(stat='count', aes(label=..count..), vjust=-0.5)+ xlab('Employment Status') + ylab('Count')
 
-#Chart 2
-#LoanOriginalAmount by EmploymentStatus 
-ggplot(loans2, aes(EmploymentStatus, LoanOriginalAmount))+
-  geom_boxplot()+ xlab('Employment Status') + ylab('Loan Amount')
-```
-<h2>Income Brackets</h2>
-Next, it should be important to understand which income brackets are the most frequent. It helps understand which income range is most common in the data set. From Chart 3, $25,000-49,999 and $50,000-74,99 are the most frequent, with Not employeed representing a small portion. $100,000+ income brackets tend to have the highest median for loans amount. From Chart 5, it is evident that the $1-24,999 range has the highest dept to income ratio, meaning, they are borrowing the most money in propotion to their income. The most defaulted loans also come from $25,000-49,999 and $50,000-74,99 which are the most frequent loans. The $1-24,999 bracket seems to be the one with the greatest probablity of defaulting. $75,000-99,999 and $100,000+ are the more likely to complete their loans.
-
-```{r}
 by(loans2$StatedMonthlyIncome, loans2$IncomeRange, summary)
 #Chart 3
 #Loans by Income range
 ggplot(loans2, aes(IncomeRange))+
   geom_bar()+xlab('Income Range')+ylab('Count')
+
+#Chart 6
+#Loans defaulted by IncomeRange
+ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(IncomeRange)) +
+geom_histogram(stat = 'count')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
+
+#Chart 7
+#Loans Completed by IncomeRange
+ggplot(subset(loans2, LoanStatus == 'Completed'), aes(IncomeRange)) +
+geom_histogram(stat = 'count')+
+  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
+```
+
+<h2>Bivariate Analysis</h2>
+
+```{r}
+#Chart 2
+#As well this charts shows Employed status
+#LoanOriginalAmount by EmploymentStatus 
+ggplot(loans2, aes(EmploymentStatus, LoanOriginalAmount))+
+  geom_boxplot()+ xlab('Employment Status') + ylab('Loan Amount')
+
 
 #Chart 4
 #LoanOriginalAmount by IncomeRange 
@@ -85,20 +104,19 @@ ggplot(loans2, aes(x = IncomeRange, y =DebtToIncomeRatio))+
                             '$75,000-99,999','$100,000+'))+
   facet_wrap(~IsBorrowerHomeowner)+xlab('Income Range')+ylab('Debt to Income Ratio')
 
-#Chart 6
-#Loans defaulted by IncomeRange
-ggplot(subset(loans2, LoanStatus == 'Defaulted'), aes(IncomeRange)) +
-geom_histogram(stat = 'count')+
-  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
+```
 
-#Chart 7
-#Loans Completed by IncomeRange
-ggplot(subset(loans2, LoanStatus == 'Completed'), aes(IncomeRange)) +
-geom_histogram(stat = 'count')+
-  scale_x_discrete(limits=c('Not employed','$1-24,999','$25,000-49,999','$50,000-74,999',
-                            '$75,000-99,999','$100,000+'))+xlab('Income Range')+ylab('Count')
 
+
+<h2>Multivariate Analysis</h2> 
+
+```{r}
+
+```
+
+
+
+```{r}
 #Chart 8
 #Mean and median loan amount by IncomeRange
 ggplot(mdata, aes(x = IncomeRange, value, fill = variable))+

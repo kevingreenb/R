@@ -5,11 +5,20 @@ date: "7/28/2018"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(ggplot2)
+loans2 <- read.csv('prosperLoanData.csv')
+```
+
 
 
 ```{r}
-library('ggplot2')
-diamonds
-summary(diamonds)
+#Chart 1
+#This chart shows Employed status as the most common status, with 65998 instances
+#Counts for Employment Status
+ggplot(loans2, aes(EmploymentStatus)) +
+geom_bar() +
+geom_text(stat='count', aes(label=..count..), vjust=-0.5)+ xlab('Employment Status') + ylab('Count')
 ```
 
