@@ -1,0 +1,36 @@
+---
+title: "Test"
+author: "Kevin Green"
+date: "7/28/2018"
+output: html_document
+fig_width: 20
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(ggplot2)
+loans2 <- read.csv('prosperLoanData.csv')
+```
+
+
+
+```{r fig2, fig.height = 8, fig.width = 12, fig.align = "center"}
+knitr::opts_chunk$set(fig.width=12, fig.height=8) 
+ggplot(loans2, aes(x = IncomeRange, y =DebtToIncomeRatio))+
+  geom_bar(stat = 'summary', fun.y = mean)+
+  scale_x_discrete(limits=c('$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+
+  facet_wrap(~IsBorrowerHomeowner)+xlab('Income Range')+ylab('Debt to Income Ratio')
+
+```
+
+```{r}
+knitr::opts_chunk$set(fig.width=12, fig.height=8) 
+ggplot(loans2, aes(x = IncomeRange, y =DebtToIncomeRatio))+
+  geom_bar(stat = 'summary', fun.y = mean)+
+  scale_x_discrete(limits=c('$1-24,999','$25,000-49,999','$50,000-74,999',
+                            '$75,000-99,999','$100,000+'))+
+  facet_wrap(~IsBorrowerHomeowner)+xlab('Income Range')+ylab('Debt to Income Ratio')
+```
+
+
